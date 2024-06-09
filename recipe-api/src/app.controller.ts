@@ -1,10 +1,12 @@
 import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TagService } from './tag/tag.service';
+import { SoupTypeService } from './soup-type/soup-type.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService, private readonly tagService: TagService) { }
+  [x: string]: any;
+  constructor(private readonly appService: AppService, private readonly tagService: TagService, private readonly soupTypeService: SoupTypeService) { }
 
   @Get()
   getHello(): string {
@@ -18,9 +20,21 @@ export class AppController {
 
   @Post('tag')
   async createTag(
-    @Body() tagData: { tagName: string},
+    @Body() tagData: { tagName: string },
   ): Promise<any> {
     return this.tagService.createTag(tagData);
+  }
+
+  @Get("soupType/:id")
+  getSoupType(@Param('id') id: string): any {
+    return this.soupTypeService.getSoupType({ typeId: Number(id) });
+  }
+
+  @Post('soupType')
+  async createSoupType(
+    @Body() soupTypeData: { typeName: string },
+  ): Promise<any> {
+    return this.soupTypeService.createSoupType(soupTypeData);
   }
 
   @Get("/recipes")
@@ -39,5 +53,5 @@ export class AppController {
   }
 
 
-  
+
 }

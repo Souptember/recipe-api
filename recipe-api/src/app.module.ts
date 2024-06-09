@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { RecipeTypesModule } from './recipe-types/recipe-types.module';
 import { TagService } from './tag/tag.service';
 import { PrismaService } from './prisma/prisma.service';
+import { SoupTypeService } from './soup-type/soup-type.service';
 
 @Module({
   imports: [
@@ -21,6 +22,6 @@ import { PrismaService } from './prisma/prisma.service';
     RecipeTypesModule,
   ],
   controllers: [AppController],
-  providers: [AppService, TagService, PrismaService],
+  providers: [AppService, TagService, PrismaService, SoupTypeService],
 })
 export class AppModule {}

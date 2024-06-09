@@ -13,8 +13,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Tag {
-  tagId    Int  @default(autoincrement()) @id
-  tagName  String
+  tagId     Int         @id @default(autoincrement())
+  tagName   String
+  recipeTag RecipeTag[]
+}
+
+model SoupType {
+  typeId   Int      @id @default(autoincrement())
+  typeName String
+  recipe   Recipe[]
+}
+
+model Ingredient {
+  ingredientId   Int        @id @default(autoincrement())
+  ingredientName String
+  Quantity       Quantity[]
+}
+
+model Picture {
+  pictureId     Int             @id @default(autoincrement())
+  pictureName   String
+  pictureType   String
+  recipePicture RecipePicture[]
+}
+
+model Recipe {
+  recipeId      Int             @id @default(autoincrement())
+  description   String
+  directions    String
+  typeId        Int
+  type          SoupType        @relation(fields: [typeId], references: [typeId])
+  recipeTag     RecipeTag[]
+  recipePicture RecipePicture[]
+  Quantity      Quantity[]
+}
+
+model RecipeTag {
+  recipeId Int
+  tagId    Int
+
+  recipe Recipe @relation(fields: [recipeId], references: [recipeId])
+  tag    Tag    @relation(fields: [tagId], references: [tagId])
+
+  @@id([recipeId, tagId])
+}
+
+model RecipePicture {
+  recipeId  Int
+  pictureId Int
+
+  recipe  Recipe  @relation(fields: [recipeId], references: [recipeId])
+  picture Picture @relation(fields: [pictureId], references: [pictureId])
+
+  @@id([recipeId, pictureId])
+}
+
+model Quantity {
+  recipeId     Int
+  ingredientId Int
+  amount       Int
+  notes        String
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [recipeId])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [ingredientId])
+
+  @@id([recipeId, ingredientId])
 }
