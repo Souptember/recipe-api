@@ -4,19 +4,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TagService {
-    constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
-    async getTag(
-        tagWhereUniqueInput: Prisma.TagWhereUniqueInput,
-    ): Promise<Tag | null> {
-        return this.prisma.tag.findUnique({
-            where: tagWhereUniqueInput,
-        });
-    }
+  async getTag(
+    tagWhereUniqueInput: Prisma.TagWhereUniqueInput,
+  ): Promise<Tag | null> {
+    return this.prisma.tag.findUnique({
+      where: tagWhereUniqueInput,
+    });
+  }
 
-    async createTag(data: Prisma.TagCreateInput): Promise<Tag> {
-        return this.prisma.tag.create({
-            data,
-        });
-    }
+  async createTag(data: Prisma.TagCreateInput): Promise<Tag> {
+    return this.prisma.tag.create({
+      data,
+    });
+  }
 }
