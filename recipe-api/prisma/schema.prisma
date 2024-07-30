@@ -15,19 +15,19 @@ datasource db {
 
 model Tag {
   tagId     Int         @id @default(autoincrement())
-  tagName   String
+  tagName   String      @unique
   recipeTag RecipeTag[]
 }
 
 model SoupType {
   typeId   Int      @id @default(autoincrement())
-  typeName String
+  typeName String   @unique
   recipe   Recipe[]
 }
 
 model Ingredient {
   ingredientId   Int        @id @default(autoincrement())
-  ingredientName String
+  ingredientName String     @unique
   Quantity       Quantity[]
 }
 

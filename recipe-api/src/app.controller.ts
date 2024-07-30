@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Param, Body, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Delete,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { TagService } from './tag/tag.service';
 import { SoupTypeService } from './soup-type/soup-type.service';
@@ -17,17 +26,42 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  //Tag
+  @Get('tag')
+  getAllTag(): any {
+    return this.tagService.getAllTag();
+  }
+
   @Get('tag/:id')
   getTag(@Param('id') id: string): any {
     return this.tagService.getTag({ tagId: Number(id) });
   }
 
   @Post('tag')
-  async createTag(@Body() tagData: { tagName: string }): Promise<any> {
-    return this.tagService.createTag(tagData);
+  async createTag(
+    @Body() tagData: { tagId: number; tagName: string },
+  ): Promise<any> {
+    try {
+      if (tagData.tagId == 0 || tagData.tagId == null) {
+        return await this.tagService.createTag(tagData.tagName);
+      } else {
+        return await this.tagService.editTag(tagData.tagId, tagData.tagName);
+      }
+    } catch (e) {
+      this.handleError(e);
+    }
   }
 
-  //get all in an array
+  @Delete('tag/:id')
+  async deleteTag(@Param('id') id: string): Promise<any> {
+    try {
+      return await this.tagService.deleteTag(Number(id));
+    } catch (e) {
+      this.handleError(e);
+    }
+  }
+
+  //Soup Type
   @Get('soupType')
   getAllSoupType(): any {
     return this.soupTypeService.getAllSoupType();
@@ -39,24 +73,33 @@ export class AppController {
   }
 
   @Post('soupType')
-  createSoupType(
+  async createSoupType(
     @Body() soupTypeData: { typeId: number; typeName: string },
   ): Promise<any> {
-    if (soupTypeData.typeId == 0 || soupTypeData.typeId == null) {
-      return this.soupTypeService.createSoupType(soupTypeData.typeName);
-    } else {
-      return this.soupTypeService.editSoupType(
-        soupTypeData.typeId,
-        soupTypeData.typeName,
-      );
+    try {
+      if (soupTypeData.typeId == 0 || soupTypeData.typeId == null) {
+        return await this.soupTypeService.createSoupType(soupTypeData.typeName);
+      } else {
+        return await this.soupTypeService.editSoupType(
+          soupTypeData.typeId,
+          soupTypeData.typeName,
+        );
+      }
+    } catch (e) {
+      this.handleError(e);
     }
   }
 
   @Delete('soupType/:id')
-  deleteSoupType(@Param('id') id: string): Promise<any> {
-    return this.soupTypeService.deleteSoupType(Number(id));
+  async deleteSoupType(@Param('id') id: string): Promise<any> {
+    try {
+      return await this.soupTypeService.deleteSoupType(Number(id));
+    } catch (e) {
+      this.handleError(e);
+    }
   }
 
+  //Test????
   @Get('/recipes')
   getRecipes(): string {
     return JSON.stringify({
@@ -67,5 +110,16 @@ export class AppController {
       },
     });
     // return this.appService.getRecipes(); //from db
+  }
+  //Error handling
+  handleError(error: Error) {
+    console.log(error);
+    throw new HttpException(
+      { status: HttpStatus.BAD_REQUEST, error: error.toString() },
+      HttpStatus.BAD_REQUEST,
+      {
+        cause: error.toString(),
+      },
+    );
   }
 }
